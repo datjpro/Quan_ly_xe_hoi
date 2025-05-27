@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - CarManager Pro</title>
+    
+    <!-- Bootstrap 5 & Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --primary-solid: #667eea;
+            --secondary: #64748b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --radius: 16px;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-lg: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* Glass Morphism Navbar */
+        .glass-navbar {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: var(--shadow);
+            margin: 1rem;
+            border-radius: var(--radius);
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.75rem;
+            color: white !important;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .navbar-nav .nav-link {
+            color: rgba(255, 255, 255, 0.9) !important;
+            font-weight: 500;
+            padding: 0.75rem 1.25rem !important;
+            border-radius: 12px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            margin: 0 0.25rem;
+        }
+
+        .navbar-nav .nav-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: white !important;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .dropdown-menu {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: none;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            padding: 0.75rem 0;
+        }
+
+        .dropdown-item {
+            padding: 0.75rem 1.5rem;
+            transition: all 0.3s ease;
+            color: var(--dark);
+        }
+
+        .dropdown-item:hover {
+            background: var(--primary-solid);
+            color: white;
+        }
+
+        /* Main Container */
+        .main-container {
+            margin: 0 1rem 1rem 1rem;
+        }
+
+        .content-wrapper {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            min-height: calc(100vh - 200px);
+            padding: 2rem;
+        }
+
+        /* Modern Cards */
+        .modern-card {
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+        }
+
+        .modern-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .modern-card-header {
+            background: var(--primary);
+            color: white;
+            padding: 1.5rem;
+            border: none;
+            position: relative;
+        }
+
+        .modern-card-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #667eea);
+            background-size: 200% 100%;
+            animation: shimmer 3s ease-in-out infinite;
+        }
+
+        /* Animations */
+        @@keyframes shimmer {
+            0%, 100% { background-position: 200% 0; }
+            50% { background-position: -200% 0; }
+        }
+
+        @@keyframes float {
+            0%, 100% { transform: translate(-50%, -50%) rotate(0deg); }
+            50% { transform: translate(-50%, -50%) rotate(180deg); }
+        }
+
+        @@keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Modern Buttons */
+        .btn-modern {
+            border-radius: 12px;
+            padding: 0.75rem 1.75rem;
+            font-weight: 600;
+            border: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-modern::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-modern:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary-modern {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary-modern:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-success-modern {
+            background: linear-gradient(135deg, var(--success), #059669);
+            color: white;
+        }
+
+        .btn-warning-modern {
+            background: linear-gradient(135deg, var(--warning), #d97706);
+            color: white;
+        }
+
+        .btn-danger-modern {
+            background: linear-gradient(135deg, var(--danger), #dc2626);
+            color: white;
+        }
+
+        /* Form Controls */
+        .form-control-modern {
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 0.875rem 1.25rem;
+            transition: all 0.3s ease;
+            background: rgba(248, 250, 252, 0.8);
+        }
+
+        .form-control-modern:focus {
+            border-color: var(--primary-solid);
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+            background: white;
+        }
+
+        .form-label-modern {
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 0.75rem;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Car Cards */
+        .car-card {
+            background: white;
+            border-radius: var(--radius);
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: none;
+            box-shadow: var(--shadow);
+            position: relative;
+        }
+
+        .car-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .car-card-img {
+            height: 220px;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .car-card:hover .car-card-img {
+            transform: scale(1.1);
+        }
+
+        .car-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            backdrop-filter: blur(10px);
+            z-index: 10;
+        }
+
+        .electric-badge {
+            background: rgba(16, 185, 129, 0.9);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .gas-badge {
+            background: rgba(245, 158, 11, 0.9);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        /* Page Headers */
+        .page-header {
+            background: var(--primary);
+            color: white;
+            padding: 3rem 0;
+            border-radius: var(--radius);
+            margin-bottom: 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        /* Alerts */
+        .alert-modern {
+            border: none;
+            border-radius: var(--radius);
+            padding: 1.25rem 1.5rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .alert-success {
+            background: rgba(16, 185, 129, 0.1);
+            color: #065f46;
+            border-left: 4px solid var(--success);
+        }
+
+        .alert-danger {
+            background: rgba(239, 68, 68, 0.1);
+            color: #991b1b;
+            border-left: 4px solid var(--danger);
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s linear infinite;
+        }
+
+        /* Footer */
+        .footer-modern {
+            background: rgba(30, 41, 59, 0.95);
+            backdrop-filter: blur(20px);
+            color: rgba(255, 255, 255, 0.8);
+            padding: 1.5rem 0;
+            margin: 1rem;
+            border-radius: var(--radius);
+            text-align: center;
+        }
+
+        /* Responsive Design */
+        @@media (max-width: 768px) {
+            .glass-navbar,
+            .main-container,
+            .footer-modern {
+                margin: 0.5rem;
+            }
+            
+            .content-wrapper {
+                padding: 1rem;
+            }
+            
+            .navbar-nav .nav-link {
+                padding: 0.5rem !important;
+                margin: 0.125rem 0;
+            }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.1);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-solid);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #5a67d8;
+        }
+    </style>
+</head>
+<body>
+    <!-- Glass Navbar -->
+    <nav class="navbar navbar-expand-lg glass-navbar">
+        <div class="container-fluid">
+            <a class="navbar-brand" asp-controller="Cars" asp-action="Index">
+                <i class="fas fa-car-side me-2"></i>CarManager Pro
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Cars" asp-action="Index">
+                            <i class="bi bi-grid-3x3-gap me-2"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-collection me-2"></i>Quản lý
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" asp-controller="Branches" asp-action="Index">
+                                <i class="bi bi-building me-2"></i>Hãng xe
+                            </a></li>
+                            <li><a class="dropdown-item" asp-controller="ElectricCars" asp-action="Index">
+                                <i class="bi bi-lightning-charge me-2"></i>Xe điện
+                            </a></li>
+                            <li><a class="dropdown-item" asp-controller="GasCars" asp-action="Index">
+                                <i class="bi bi-fuel-pump me-2"></i>Xe xăng
+                            </a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Cars" asp-action="Create">
+                            <i class="bi bi-plus-circle me-2"></i>Thêm xe
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Cars" asp-action="Search">
+                            <i class="bi bi-search me-2"></i>Tìm kiếm
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-container">
+        <div class="content-wrapper">
+            @RenderBody()
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer-modern">
+        <div class="container">
+            <i class="bi bi-car-front me-2"></i>
+            &copy; 2025 CarManager Pro - Hệ thống quản lý xe hiện đại
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/js/site.js"></script>
+    
+    <script>
+        // Add loading animation to buttons
+        document.addEventListener('DOMContentLoaded', function() {
+            const buttons = document.querySelectorAll('.btn-modern');
+            buttons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const icon = this.querySelector('i');
+                    if (icon && !this.classList.contains('no-loading')) {
+                        const originalClass = icon.className;
+                        icon.className = 'loading';
+                        setTimeout(() => {
+                            icon.className = originalClass;
+                        }, 2000);
+                    }
+                });
+            });
+        });
+    </script>
+    
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,57 @@
+@model IEnumerable<Car.Models.GasCar>
+
+@{
+    ViewData["Title"] = "Quản lý xe xăng";
+}
+
+<div class="container mt-4">
+    <h2>@ViewData["Title"]</h2>
+
+    <div class="card">
+        <div class="card-body">
+            <table class="table table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Mẫu xe</th>
+                        <th>Hãng xe</th>
+                        <th>Mức tiêu thụ (L/100km)</th>
+                        <th>Giá bán</th>
+                        <th>Hình ảnh</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@Html.DisplayFor(modelItem => item.Id)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Model)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Branch.Name)</td>
+                            <td>@Html.DisplayFor(modelItem => item.FuelEff)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Price) USD</td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(item.ImageUrl))
+                                {
+                                    <img src="@item.ImageUrl" alt="@item.Model" style="width: 80px; height: 60px; object-fit: cover;" class="img-thumbnail" />
+                                }
+                                else
+                                {
+                                    <span class="text-muted">Không có hình</span>
+                                }
+                            </td>
+                            <td>
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">
+                                    <i class="fas fa-edit"></i> Sửa
+                                </a>
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">
+                                    <i class="fas fa-trash"></i> Xóa
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

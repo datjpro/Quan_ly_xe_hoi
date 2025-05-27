@@ -1,0 +1,54 @@
+@model Car.Models.ElectricCar
+
+@{
+    ViewData["Title"] = "Xóa xe điện";
+}
+
+<div class="container mt-4">
+    <h2>@ViewData["Title"]</h2>
+
+    <div class="alert alert-warning">
+        <h4>Bạn có chắc chắn muốn xóa xe này?</h4>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <dl class="row">
+                                <dt class="col-sm-4">Mẫu xe:</dt>
+                                <dd class="col-sm-8">@Html.DisplayFor(model => model.Model)</dd>
+                                
+                                <dt class="col-sm-4">Hãng xe:</dt>
+                                <dd class="col-sm-8">@Html.DisplayFor(model => model.Branch.Name)</dd>
+                                
+                                <dt class="col-sm-4">Dung lượng pin:</dt>
+                                <dd class="col-sm-8">@Html.DisplayFor(model => model.Battery) kWh</dd>
+                                
+                                <dt class="col-sm-4">Quãng đường:</dt>
+                                <dd class="col-sm-8">@Html.DisplayFor(model => model.RangeKm) km</dd>
+                                
+                                <dt class="col-sm-4">Giá bán:</dt>
+                                <dd class="col-sm-8">@Html.DisplayFor(model => model.Price) USD</dd>
+                            </dl>
+                        </div>
+                        <div class="col-md-4">
+                            @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                            {
+                                <img src="@Model.ImageUrl" alt="@Model.Model" class="img-fluid rounded" />
+                            }
+                        </div>
+                    </div>
+
+                    <form asp-action="Delete">
+                        <input type="hidden" asp-for="Id" />
+                        <input type="submit" value="Xóa" class="btn btn-danger" />
+                        <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,212 @@
+@model Car.ViewModels.SearchViewModel
+
+@{
+    ViewData["Title"] = "Tìm kiếm xe";
+    Layout = "_Layout_Modern";
+}
+
+<div class="page-header">
+    <h1><i class="bi bi-search me-3"></i>Tìm kiếm xe</h1>
+    <p class="mb-0">Tìm kiếm xe theo nhiều tiêu chí khác nhau</p>
+</div>
+
+<div class="row g-4">
+    <!-- Search Form -->
+    <div class="col-lg-4">
+        <div class="modern-card">
+            <div class="modern-card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-funnel me-2"></i>Bộ lọc tìm kiếm
+                </h5>
+            </div>
+            <div class="card-body p-4">
+                <form asp-action="Search" method="post">
+                    <input type="hidden" asp-for="HasSearched" value="true" />
+                    
+                    <div class="mb-4">
+                        <label asp-for="SearchTerm" class="form-label-modern"></label>
+                        <input asp-for="SearchTerm" class="form-control form-control-modern" placeholder="Nhập tên xe..." />
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label asp-for="BranchId" class="form-label-modern"></label>
+                        <select asp-for="BranchId" class="form-control form-control-modern">
+                            <option value="">-- Tất cả hãng xe --</option>
+                            @foreach (var branch in Model.Branches)
+                            {
+                                <option value="@branch.Id">@branch.Name (@branch.Country)</option>
+                            }
+                        </select>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label asp-for="CarType" class="form-label-modern"></label>
+                        <select asp-for="CarType" class="form-control form-control-modern">
+                            <option value="">-- Tất cả loại xe --</option>
+                            <option value="Electric">Xe điện</option>
+                            <option value="Gas">Xe xăng</option>
+                        </select>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-6">
+                            <label asp-for="MinPrice" class="form-label-modern"></label>
+                            <input asp-for="MinPrice" class="form-control form-control-modern" type="number" step="0.01" placeholder="0" />
+                        </div>
+                        <div class="col-6">
+                            <label asp-for="MaxPrice" class="form-label-modern"></label>
+                            <input asp-for="MaxPrice" class="form-control form-control-modern" type="number" step="0.01" placeholder="∞" />
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary-modern btn-modern w-100">
+                        <i class="bi bi-search me-2"></i>Tìm kiếm
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Search Results -->
+    <div class="col-lg-8">
+        <div class="modern-card">
+            <div class="modern-card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="bi bi-list-ul me-2"></i>Kết quả tìm kiếm
+                    </h5>
+                    @if (Model.HasSearched)
+                    {
+                        <span class="badge bg-light text-dark fs-6">@Model.TotalResults xe</span>
+                    }
+                </div>
+            </div>
+            <div class="card-body p-4">
+                @if (Model.HasSearched)
+                {
+                    @if (Model.ElectricCars.Any() || Model.GasCars.Any())
+                    {
+                        <!-- Electric Cars Results -->
+                        @if (Model.ElectricCars.Any())
+                        {
+                            <div class="mb-5">
+                                <h6 class="text-success fw-bold mb-3">
+                                    <i class="bi bi-lightning-charge me-2"></i>Xe điện (@Model.ElectricCars.Count xe)
+                                </h6>
+                                <div class="row g-3">
+                                    @foreach (var car in Model.ElectricCars)
+                                    {
+                                        <div class="col-md-6">
+                                            <div class="car-card h-100">
+                                                <div class="car-badge electric-badge">
+                                                    <i class="bi bi-lightning-fill me-1"></i>Điện
+                                                </div>
+                                                @if (!string.IsNullOrEmpty(car.ImageUrl))
+                                                {
+                                                    <img src="@car.ImageUrl" class="card-img-top car-card-img" alt="@car.Model">
+                                                }
+                                                else
+                                                {
+                                                    <div class="d-flex align-items-center justify-content-center bg-light" style="height: 220px;">
+                                                        <i class="bi bi-car-front text-muted" style="font-size: 3rem;"></i>
+                                                    </div>
+                                                }
+                                                <div class="card-body">
+                                                    <h6 class="card-title fw-bold">@car.Model</h6>
+                                                    <p class="card-text small text-muted mb-3">
+                                                        <i class="bi bi-building me-2"></i>@car.Branch?.Name<br>
+                                                        <i class="bi bi-battery-charging me-2"></i>@car.Battery kWh<br>
+                                                        <i class="bi bi-speedometer me-2"></i>@car.RangeKm km
+                                                    </p>
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <span class="h5 mb-0 text-success">${@car.Price.ToString("N0")}</span>
+                                                        <div class="btn-group btn-group-sm">
+                                                            <a href="#" class="btn btn-outline-primary btn-sm">
+                                                                <i class="bi bi-eye"></i>
+                                                            </a>
+                                                            <a href="#" class="btn btn-outline-warning btn-sm">
+                                                                <i class="bi bi-pencil"></i>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+
+                        <!-- Gas Cars Results -->
+                        @if (Model.GasCars.Any())
+                        {
+                            <div class="mb-4">
+                                <h6 class="text-warning fw-bold mb-3">
+                                    <i class="bi bi-fuel-pump me-2"></i>Xe xăng (@Model.GasCars.Count xe)
+                                </h6>
+                                <div class="row g-3">
+                                    @foreach (var car in Model.GasCars)
+                                    {
+                                        <div class="col-md-6">
+                                            <div class="car-card h-100">
+                                                <div class="car-badge gas-badge">
+                                                    <i class="bi bi-fuel-pump-fill me-1"></i>Xăng
+                                                </div>
+                                                @if (!string.IsNullOrEmpty(car.ImageUrl))
+                                                {
+                                                    <img src="@car.ImageUrl" class="card-img-top car-card-img" alt="@car.Model">
+                                                }
+                                                else
+                                                {
+                                                    <div class="d-flex align-items-center justify-content-center bg-light" style="height: 220px;">
+                                                        <i class="bi bi-car-front text-muted" style="font-size: 3rem;"></i>
+                                                    </div>
+                                                }
+                                                <div class="card-body">
+                                                    <h6 class="card-title fw-bold">@car.Model</h6>
+                                                    <p class="card-text small text-muted mb-3">
+                                                        <i class="bi bi-building me-2"></i>@car.Branch?.Name<br>
+                                                        <i class="bi bi-fuel-pump me-2"></i>@car.FuelEff L/100km
+                                                    </p>
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <span class="h5 mb-0 text-warning">${@car.Price.ToString("N0")}</span>
+                                                        <div class="btn-group btn-group-sm">
+                                                            <a href="#" class="btn btn-outline-primary btn-sm">
+                                                                <i class="bi bi-eye"></i>
+                                                            </a>
+                                                            <a href="#" class="btn btn-outline-warning btn-sm">
+                                                                <i class="bi bi-pencil"></i>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="text-center py-5">
+                            <i class="bi bi-search text-muted" style="font-size: 4rem;"></i>
+                            <h5 class="text-muted mt-3">Không tìm thấy xe nào</h5>
+                            <p class="text-muted">Thử thay đổi tiêu chí tìm kiếm</p>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="text-center py-5">
+                        <i class="bi bi-funnel text-muted" style="font-size: 4rem;"></i>
+                        <h5 class="text-muted mt-3">Nhập tiêu chí tìm kiếm</h5>
+                        <p class="text-muted">Sử dụng form bên trái để tìm kiếm xe</p>
+                    </div>
+                }            </div>
+        </div>
+    </div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
